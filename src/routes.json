@@ -21,9 +21,9 @@
       "slot": "Boxes"
     },
     {
-      "name": "transfer-out-summary-widget",
-      "component": "transferOutSummary",
-      "slot": "transfer-out-dashboard-slot",
+      "name": "ethio-summary-widget",
+      "component": "ethioSummary",
+      "slot": "ethio-summary-dashboard-slot",
       "online": true,
       "offline": true,
       "meta": {
@@ -31,16 +31,16 @@
       }
     },
     {
-      "name": "transfer-out-summary-dashboard",
-      "component": "transferOutDashboardLink",
+      "name": "ethio-summary-dashboard",
+      "component": "ethioSummaryDashboardLink",
       "slot": "patient-chart-dashboard-slot",
       "online": true,
       "offline": true,
       "order": 6,
       "meta": {
         "columns": 1,
-        "slot": "transfer-out-dashboard-slot",
-        "path": "transfer-out"
+        "slot": "ethio-summary-dashboard-slot",
+        "path": "ethio-summary"
       }
     },
     {
@@ -52,17 +52,6 @@
     {
       "component": "root",
       "route": "root"
-    }
-  ],
-  "workspaces": [
-    {
-      "name": "transfer-out-workspace",
-      "title": "Transfer Out",
-      "component": "transferOutWorkspace",
-      "type": "form",
-      "canMaximize": false,
-      "canHide": false,
-      "width": "wider"
     }
   ]
 }

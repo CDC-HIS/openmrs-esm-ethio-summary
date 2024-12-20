@@ -1,6 +1,6 @@
 export const dashboardMeta = {
-  slot: 'transfer-out-dashboard-slot',
+  slot: 'ethio-summary-dashboard-slot',
   columns: 1,
-  path: 'transfer-out',
-  title: 'Transfer Out',
+  path: 'ethio-summary',
+  title: 'Ethio Summary',
 };

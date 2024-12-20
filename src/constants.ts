@@ -4,7 +4,7 @@ export const encounterRepresentation =
   'obs:(uuid,obsDatetime,voided,groupMembers,formFieldNamespace,formFieldPath,concept:(uuid,name:(uuid,name)),value:(uuid,name:(uuid,name),' +
   'names:(uuid,conceptNameType,name))))';
 
-export const transferOutFieldConcepts = {
+export const ethioSummaryFieldConcepts = {
   transfferedFrom: '161550AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
   transferredTo: '2c30c599-1e4f-46f9-8488-5ab57cdc8ac3',
   ClinicianName: '1473AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
@@ -17,7 +17,7 @@ export const transferOutFieldConcepts = {
   motherPMTCT: '',
 };
 
-export const transferOutWorkspace = 'transfer-out-workspace';
+export const ethioSummaryWorkspace = 'ethio-summary-workspace';
 export const phdpEncounterTypeUuid = 'f1b397c1-46bd-43e6-a23d-ae2cedaec881';
 
 export const FOLLOWUP_ENCOUNTER_TYPE_UUID = '136b2ded-22a3-4831-a39a-088d35a50ef5';
