@@ -64,14 +64,6 @@ export async function fetchPatientData(patientUuid: string) {
       patientUUID: data.patientUUID,
       currentRegimenInitiatedDate: data.currentRegimenInitiatedDate,
       regimen: data.regimen,
-      followUpStatus: data.followUpStatus,
-      pregnancyStatus: data.pregnancyStatus,
-      breastFeeding: data.breastFeeding,
-      cd4AboveFiveAgeCount: data.cd4AboveFiveAgeCount,
-      cd4ForChild: data.cd4ForChild,
-      // reasonForVlTest: data.reasonForVlTest,
-      // routingVlTest: data.routingVlTest,
-      // targetedVlTest: data.targetedVlTest,
       resourceVersion: data.resourceVersion,
     };
   } catch (error) {

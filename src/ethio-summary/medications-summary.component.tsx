@@ -27,9 +27,9 @@ interface HivCareAndTreatmentProps {
   patientUuid: string;
 }
 
-const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
+const medicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
-  const headerTitle = 'Conditions';
+  const headerTitle = 'Medications summary';
   const { encounters, isError, isValidating, mutate } = useEncounters(
     patientUuid,
     FOLLOWUP_ENCOUNTER_TYPE_UUID,
@@ -63,9 +63,6 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
     { key: 'regimen', header: 'Regimen' },
   { key: 'currentRegimenInitiatedDate', header: 'Initiated Date' },
   { key: 'pregnant', header: 'Pregnant?' },
-  { key: 'breastFeeding', header: 'Breast Feeding?' },
-  { key: 'cd4', header: 'CD4 result' },
-  { key: 'followUpStatus', header: 'Followup Status' },
   ];
 
   const tableRows = patientData
@@ -75,15 +72,6 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
       currentRegimenInitiatedDate: patient.currentRegimenInitiatedDate
         ? formatDate(parseDate(patient.currentRegimenInitiatedDate), { mode: 'wide' })
         : null,
-      followUpStatus: patient.followUpStatus,
-      pregnant: patient.pregnancyStatus !== null ? patient.pregnancyStatus : null,
-      breastFeeding: patient.breastFeeding !== null ? patient.breastFeeding : null,
-      cd4:
-        patient.cd4AboveFiveAgeCount != null
-          ? patient.cd4AboveFiveAgeCount
-          : patient.cd4ForChild != null
-          ? patient.cd4ForChild
-          : null,
     }))
   : [];
   // Pagination state
@@ -140,4 +128,4 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   );
 };
 
-export default EthioSummary;
+export default medicationSummary;
