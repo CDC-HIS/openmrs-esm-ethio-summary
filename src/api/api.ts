@@ -57,15 +57,19 @@ export function fetchPatientLastEncounter(patientUuid: string, encounterType) {
 
 export async function fetchPatientData(patientUuid: string) {
   try {
-    const response = await openmrsFetch(`${restBaseUrl}/followup/${patientUuid}`);
+    const response = await openmrsFetch(`${restBaseUrl}/patientcondition/${patientUuid}`);
     const data = await response.data;
 
-    return {
-      patientUUID: data.patientUUID,
-      currentRegimenInitiatedDate: data.currentRegimenInitiatedDate,
-      regimen: data.regimen,
-      resourceVersion: data.resourceVersion,
-    };
+    return data.map((detail: any) => ({
+      id: detail.id,
+      uuid: detail.uuid,
+      // currentRegimenInitiatedDate: data.currentRegimenInitiatedDate,
+      // regimen: data.regimen,
+      // resourceVersion: data.resourceVersion,
+      name: detail.name,
+      onSetDate: detail.onSetDate,
+      status: 'Active'
+    }));
   } catch (error) {
     console.error('Error fetching patient data:', error);
     return null;

@@ -27,7 +27,7 @@ interface HivCareAndTreatmentProps {
   patientUuid: string;
 }
 
-const medicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
+const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
   const headerTitle = 'Medications summary';
   const { encounters, isError, isValidating, mutate } = useEncounters(
@@ -62,7 +62,7 @@ const medicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
   const tableHeaders = [
     { key: 'regimen', header: 'Regimen' },
   { key: 'currentRegimenInitiatedDate', header: 'Initiated Date' },
-  { key: 'pregnant', header: 'Pregnant?' },
+  { key: '', header: 'Details' },
   ];
 
   const tableRows = patientData
@@ -128,4 +128,4 @@ const medicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
   );
 };
 
-export default medicationSummary;
+export default MedicationSummary;

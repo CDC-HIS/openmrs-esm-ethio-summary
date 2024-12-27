@@ -41,12 +41,13 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   const [patientData, setPatientData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+
   useEffect(() => {
     const getPatientData = async () => {
       try {
         setIsLoading(true);
         const data = await fetchPatientData(patientUuid);
-        setPatientData(data ? [data] : []); // Transform data as per table structure
+        setPatientData(data); // Transform data as per table structure
       } catch (error) {
         console.error('Error fetching patient emergency contact:', error);
         return null;
@@ -60,20 +61,27 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
 
 
   const tableHeaders = [
-    { key: 'regimen', header: 'Regimen' },
-  { key: 'currentRegimenInitiatedDate', header: 'Initiated Date' },
-  { key: 'pregnant', header: 'Pregnant?' },
+    { key: 'name', header: 'Condition' },
+  { key: 'onSetDate', header: 'Date of onset' },
+  { key: 'status', header: 'Status' },
   ];
 
-  const tableRows = patientData
-  ? patientData.map((patient, index) => ({
-      id: patient.patientUUID || index,
-      regimen: patient.regimen || null,
-      currentRegimenInitiatedDate: patient.currentRegimenInitiatedDate
-        ? formatDate(parseDate(patient.currentRegimenInitiatedDate), { mode: 'wide' })
-        : null,
-    }))
-  : [];
+  const tableRows = useMemo(() => {
+    if (!patientData || !Array.isArray(patientData)) {
+      console.warn('Invalid or empty patientData:', patientData);
+      return [];
+    }
+  
+    return patientData.map((item, index) => ({
+      id: item.uuid || index,
+      name: item.name || 'N/A',
+      onSetDate: item.onSetDate
+        ? formatDate(parseDate(item.onSetDate), { mode: 'wide' })
+        : 'N/A',
+      status: item.status || 'N/A',
+    }));
+  }, [patientData]);
+
   // Pagination state
   const [currentPage, setCurrentPage] = React.useState(1);
   const rowsPerPage = 10;
