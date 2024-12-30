@@ -21,7 +21,7 @@ import { useEncounters } from './ethio-summary.resource';
 import { FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../constants';
 import { getObsFromEncounter } from '../utils/encounter-utils';
 import { EncounterActionMenu } from '../utils/encounter-action-menu';
-import { fetchPatientData } from '../api/api';
+import { fetchPatientData, fetchPatientMedicationData } from '../api/api';
 
 interface HivCareAndTreatmentProps {
   patientUuid: string;
@@ -29,7 +29,7 @@ interface HivCareAndTreatmentProps {
 
 const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
-  const headerTitle = 'Medications summary';
+  const headerTitle = 'Medications';
   const { encounters, isError, isValidating, mutate } = useEncounters(
     patientUuid,
     FOLLOWUP_ENCOUNTER_TYPE_UUID,
@@ -45,8 +45,8 @@ const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
     const getPatientData = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchPatientData(patientUuid);
-        setPatientData(data ? [data] : []); // Transform data as per table structure
+        const data = await fetchPatientMedicationData(patientUuid);
+        setPatientData(data); // Transform data as per table structure
       } catch (error) {
         console.error('Error fetching patient emergency contact:', error);
         return null;
@@ -61,17 +61,16 @@ const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
 
   const tableHeaders = [
     { key: 'regimen', header: 'Regimen' },
-  { key: 'currentRegimenInitiatedDate', header: 'Initiated Date' },
-  { key: '', header: 'Details' },
+  { key: 'dateActive', header: 'Initiated Date' },
   ];
 
   const tableRows = patientData
   ? patientData.map((patient, index) => ({
       id: patient.patientUUID || index,
-      regimen: patient.regimen || null,
-      currentRegimenInitiatedDate: patient.currentRegimenInitiatedDate
-        ? formatDate(parseDate(patient.currentRegimenInitiatedDate), { mode: 'wide' })
-        : null,
+      regimen: patient.regimen || '--',
+      dateActive: patient.dateActive
+        ? formatDate(parseDate(patient.dateActive), { mode: 'wide' })
+        : '--',
     }))
   : [];
   // Pagination state

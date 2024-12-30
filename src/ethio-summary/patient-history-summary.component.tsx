@@ -21,15 +21,15 @@ import { useEncounters } from './ethio-summary.resource';
 import { FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../constants';
 import { getObsFromEncounter } from '../utils/encounter-utils';
 import { EncounterActionMenu } from '../utils/encounter-action-menu';
-import { fetchPatientData } from '../api/api';
+import { fetchPatientData, fetchPatientHistoryData } from '../api/api';
 
 interface HivCareAndTreatmentProps {
   patientUuid: string;
 }
 
-const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
+const PatientHistorySummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
-  const headerTitle = 'Conditions';
+  const headerTitle = 'Patient History';
   const { encounters, isError, isValidating, mutate } = useEncounters(
     patientUuid,
     FOLLOWUP_ENCOUNTER_TYPE_UUID,
@@ -46,7 +46,7 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
     const getPatientData = async () => {
       try {
         setIsLoading(true);
-        const data = await fetchPatientData(patientUuid);
+        const data = await fetchPatientHistoryData(patientUuid);
         setPatientData(data); // Transform data as per table structure
       } catch (error) {
         console.error('Error fetching patient emergency contact:', error);
@@ -61,8 +61,8 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
 
 
   const tableHeaders = [
-    { key: 'name', header: 'Condition' },
-  { key: 'onSetDate', header: 'Date of onset' },
+    { key: 'observation', header: 'Observation' },
+  { key: 'value', header: 'Value' },
   ];
 
   const tableRows = useMemo(() => {
@@ -73,10 +73,8 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   
     return patientData.map((item, index) => ({
       id: item.uuid || index,
-      name: item.name || 'N/A',
-      onSetDate: item.onSetDate
-        ? formatDate(parseDate(item.onSetDate), { mode: 'wide' })
-        : 'N/A',
+      observation: item.observation || 'N/A',
+      value: item.value || 'N/A',      
     }));
   }, [patientData]);
 
@@ -134,4 +132,4 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   );
 };
 
-export default EthioSummary;
+export default PatientHistorySummary;

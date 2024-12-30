@@ -63,12 +63,44 @@ export async function fetchPatientData(patientUuid: string) {
     return data.map((detail: any) => ({
       id: detail.id,
       uuid: detail.uuid,
-      // currentRegimenInitiatedDate: data.currentRegimenInitiatedDate,
-      // regimen: data.regimen,
-      // resourceVersion: data.resourceVersion,
       name: detail.name,
       onSetDate: detail.onSetDate,
-      status: 'Active'
+      status: 'Active',
+    }));
+  } catch (error) {
+    console.error('Error fetching patient data:', error);
+    return null;
+  }
+}
+
+
+export async function fetchPatientMedicationData(patientUuid: string) {
+  try {
+    const response = await openmrsFetch(`${restBaseUrl}/medication/${patientUuid}`);
+    const data = await response.data;
+
+    return data.map((detail: any) => ({
+      id: detail.id,
+      uuid: detail.uuid,
+      regimen: detail.regimen,
+      dateActive: detail.dateActive,
+    }));
+  } catch (error) {
+    console.error('Error fetching patient data:', error);
+    return null;
+  }
+}
+
+export async function fetchPatientHistoryData(patientUuid: string) {
+  try {
+    const response = await openmrsFetch(`${restBaseUrl}/patienthistory/${patientUuid}`);
+    const data = await response.data;
+
+    return data.map((detail: any) => ({
+      id: detail.id,
+      uuid: detail.uuid,
+      observation: detail.observation,
+      value: detail.value,
     }));
   } catch (error) {
     console.error('Error fetching patient data:', error);
