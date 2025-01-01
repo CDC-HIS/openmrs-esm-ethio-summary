@@ -69,8 +69,9 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
 
     return patientData.map((item, index) => ({
       id: item.uuid || index,
-      name: item.name || 'N/A',
-      onSetDate: item.onSetDate ? formatDate(parseDate(item.onSetDate), { mode: 'wide' }) : 'N/A',
+      name: item.name || '--',
+      onSetDate: item.onSetDate ? formatDate(parseDate(item.onSetDate), { mode: 'wide' }) : '--',
+      status: item.status || '--',
     }));
   }, [patientData]);
 
