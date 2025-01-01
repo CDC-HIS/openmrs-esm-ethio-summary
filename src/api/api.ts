@@ -59,7 +59,6 @@ export async function fetchPatientData(patientUuid: string) {
   try {
     const response = await openmrsFetch(`${restBaseUrl}/patientcondition/${patientUuid}`);
     const data = await response.data;
-    console.log('data', data);
 
     return data.map((detail: any) => ({
       id: detail.id,
