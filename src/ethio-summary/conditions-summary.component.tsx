@@ -30,17 +30,13 @@ interface HivCareAndTreatmentProps {
 const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
   const headerTitle = 'Conditions';
-  const { encounters, isError, isValidating, mutate } = useEncounters(
-    patientUuid,
-    FOLLOWUP_ENCOUNTER_TYPE_UUID,
-  );
+  const { encounters, isError, isValidating, mutate } = useEncounters(patientUuid, FOLLOWUP_ENCOUNTER_TYPE_UUID);
   const layout = useLayoutType();
   const isTablet = layout === 'tablet';
   const isDesktop = layout === 'small-desktop' || layout === 'large-desktop';
 
   const [patientData, setPatientData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-
 
   useEffect(() => {
     const getPatientData = async () => {
@@ -59,10 +55,10 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
     getPatientData();
   }, [patientUuid]);
 
-
   const tableHeaders = [
     { key: 'name', header: 'Condition' },
-  { key: 'onSetDate', header: 'Date of onset' },
+    { key: 'onSetDate', header: 'Date of onset' },
+    { key: 'status', header: 'Status' },
   ];
 
   const tableRows = useMemo(() => {
@@ -70,13 +66,11 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
       console.warn('Invalid or empty patientData:', patientData);
       return [];
     }
-  
+
     return patientData.map((item, index) => ({
       id: item.uuid || index,
       name: item.name || 'N/A',
-      onSetDate: item.onSetDate
-        ? formatDate(parseDate(item.onSetDate), { mode: 'wide' })
-        : 'N/A',
+      onSetDate: item.onSetDate ? formatDate(parseDate(item.onSetDate), { mode: 'wide' }) : 'N/A',
     }));
   }, [patientData]);
 
@@ -96,7 +90,6 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
     <div className={styles.widgetCard}>
       <CardHeader title={headerTitle}>
         <span></span>
-        
       </CardHeader>
       {currentRows.length > 0 ? (
         <>
@@ -107,9 +100,7 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
                   <TableHead>
                     <TableRow>
                       {headers.map((header) => (
-                        <TableHeader {...getHeaderProps({ header })}>
-                          {header.header}
-                        </TableHeader>
+                        <TableHeader {...getHeaderProps({ header })}>{header.header}</TableHeader>
                       ))}
                     </TableRow>
                   </TableHead>

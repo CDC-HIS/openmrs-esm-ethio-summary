@@ -59,20 +59,20 @@ export async function fetchPatientData(patientUuid: string) {
   try {
     const response = await openmrsFetch(`${restBaseUrl}/patientcondition/${patientUuid}`);
     const data = await response.data;
+    console.log('data', data);
 
     return data.map((detail: any) => ({
       id: detail.id,
       uuid: detail.uuid,
       name: detail.name,
       onSetDate: detail.onSetDate,
-      status: 'Active',
+      status: detail.status,
     }));
   } catch (error) {
     console.error('Error fetching patient data:', error);
     return null;
   }
 }
-
 
 export async function fetchPatientMedicationData(patientUuid: string) {
   try {
@@ -107,4 +107,3 @@ export async function fetchPatientHistoryData(patientUuid: string) {
     return null;
   }
 }
-
