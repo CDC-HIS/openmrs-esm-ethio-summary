@@ -10,13 +10,21 @@ import {
   TableBody,
   TableCell,
   Pagination,
+  Layer,
+  Tile,
 } from '@carbon/react';
 import { DataTableSkeleton, InlineLoading } from '@carbon/react';
 import { Add } from '@carbon/react/icons';
 import { formatDate, parseDate, restBaseUrl, useLayoutType } from '@openmrs/esm-framework';
-import { CardHeader, EmptyState, ErrorState, launchPatientWorkspace } from '@openmrs/esm-patient-common-lib';
+import {
+  CardHeader,
+  EmptyDataIllustration,
+  EmptyState,
+  ErrorState,
+  launchPatientWorkspace,
+} from '@openmrs/esm-patient-common-lib';
 import { useTranslation } from 'react-i18next';
-import styles from './hiv-care-and-treatment.scss';
+import styles from './ethio-summary.scss';
 import { useEncounters } from './ethio-summary.resource';
 import { FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../constants';
 import { getObsFromEncounter } from '../utils/encounter-utils';
@@ -30,16 +38,17 @@ interface HivCareAndTreatmentProps {
 const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
   const { t } = useTranslation();
   const headerTitle = 'Medications';
-  const { encounters, isError, isValidating, mutate } = useEncounters(
-    patientUuid,
-    FOLLOWUP_ENCOUNTER_TYPE_UUID,
-  );
+  const { encounters, isError, isValidating, mutate } = useEncounters(patientUuid, FOLLOWUP_ENCOUNTER_TYPE_UUID);
   const layout = useLayoutType();
   const isTablet = layout === 'tablet';
   const isDesktop = layout === 'small-desktop' || layout === 'large-desktop';
 
   const [patientData, setPatientData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     const getPatientData = async () => {
@@ -58,28 +67,38 @@ const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
     getPatientData();
   }, [patientUuid]);
 
-
   const tableHeaders = [
     { key: 'regimen', header: 'Regimen' },
-  { key: 'dateActive', header: 'Initiated Date' },
+    { key: 'dateActive', header: 'Initiated Date' },
   ];
 
   const tableRows = patientData
-  ? patientData.map((patient, index) => ({
-      id: patient.patientUUID || index,
-      regimen: patient.regimen || '--',
-      dateActive: patient.dateActive
-        ? formatDate(parseDate(patient.dateActive), { mode: 'wide' })
-        : '--',
-    }))
-  : [];
+    ? patientData.map((patient, index) => ({
+        id: patient.patientUUID || index,
+        regimen: patient.regimen || '--',
+        dateActive: patient.dateActive ? formatDate(parseDate(patient.dateActive), { mode: 'wide' }) : '--',
+      }))
+    : [];
+
   // Pagination state
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const rowsPerPage = 10;
   const totalRows = tableRows.length;
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = tableRows.slice(indexOfFirstRow, indexOfLastRow);
+
+  const currentRows = useMemo(
+    () => tableRows.slice(indexOfFirstRow, indexOfLastRow),
+    [indexOfFirstRow, indexOfLastRow, tableRows],
+  );
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setRowsPerPage(newPageSize);
+    setCurrentPage(1); // Reset to the first page when the page size changes
+  };
+
+  // Function to handle page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   // Error handling for loading and error states
   if (isLoading) return <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
@@ -89,7 +108,6 @@ const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
     <div className={styles.widgetCard}>
       <CardHeader title={headerTitle}>
         <span></span>
-        
       </CardHeader>
       {currentRows.length > 0 ? (
         <>
@@ -100,9 +118,7 @@ const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
                   <TableHead>
                     <TableRow>
                       {headers.map((header) => (
-                        <TableHeader {...getHeaderProps({ header })}>
-                          {header.header}
-                        </TableHeader>
+                        <TableHeader {...getHeaderProps({ header })}>{header.header}</TableHeader>
                       ))}
                     </TableRow>
                   </TableHead>
@@ -119,9 +135,35 @@ const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
               </TableContainer>
             )}
           </DataTable>
+          {totalRows > rowsPerPage && (
+            <Pagination
+              backwardText={t('previousPage', 'Previous page')}
+              forwardText={t('nextPage', 'Next page')}
+              itemsPerPageText={t('itemsPerPage', 'Items per page')}
+              page={currentPage}
+              pageSize={100}
+              pageSizes={[10, 20, 30, 40, 50]}
+              totalItems={totalRows}
+              onChange={(event) => {
+                if (event.pageSize !== rowsPerPage) {
+                  handlePageSizeChange(event.pageSize);
+                }
+                if (event.page !== currentPage) {
+                  handlePageChange(event.page);
+                }
+              }}
+            />
+          )}
         </>
       ) : (
-        <div></div>
+        <Layer>
+          <Tile className={styles.tile}>
+            <EmptyDataIllustration />
+            <p className={styles.content}>
+              {t('noMedications', 'There are no medications to display for this patient')}
+            </p>
+          </Tile>
+        </Layer>
       )}
     </div>
   );

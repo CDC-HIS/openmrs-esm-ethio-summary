@@ -1,0 +1,47 @@
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@use '@carbon/styles/scss/colors';
+@import '@openmrs/esm-styleguide/src/vars';
+
+.widgetCard {
+  border: 1px solid $ui-03;
+}
+
+.priorityPill {
+  @include type.type-style('label-01');
+  background-color: colors.$gray-20; // Default for unknown status
+  border-radius: spacing.$spacing-05;
+  padding: spacing.$spacing-01;
+  text-align: center;
+
+  &[data-priority='inactive'] {
+    background-color: colors.$green-20;
+    color: colors.$green-80; // Optional: Adjust text color for better contrast
+  }
+
+  &[data-priority='active'] {
+    background-color: colors.$red-20;
+    color: colors.$red-80; // Optional: Adjust text color for better contrast
+  }
+
+  &[data-priority='history_of'] {
+    background-color: colors.$gray-20; // Fallback color for other statuses
+    color: colors.$gray-100; // Optional: Adjust text color for better contrast
+  }
+
+  &[data-priority= ''] {
+    background-color: transparent; // Transparent background
+    color: inherit; // Optional: Use inherited text color
+  }
+}
+
+.content {
+  @include type.type-style('heading-compact-01');
+  color: $text-02;
+  margin-top: spacing.$spacing-05;
+  margin-bottom: spacing.$spacing-03;
+}
+
+.tile {
+  text-align: center;
+}

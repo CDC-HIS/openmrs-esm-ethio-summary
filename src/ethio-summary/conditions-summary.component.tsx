@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { capitalize, lowerCase } from 'lodash-es';
 import {
   Button,
   DataTable,
@@ -10,13 +11,21 @@ import {
   TableBody,
   TableCell,
   Pagination,
+  Layer,
+  Tile,
 } from '@carbon/react';
 import { DataTableSkeleton, InlineLoading } from '@carbon/react';
 import { Add } from '@carbon/react/icons';
 import { formatDate, parseDate, restBaseUrl, useLayoutType } from '@openmrs/esm-framework';
-import { CardHeader, EmptyState, ErrorState, launchPatientWorkspace } from '@openmrs/esm-patient-common-lib';
+import {
+  CardHeader,
+  EmptyDataIllustration,
+  EmptyState,
+  ErrorState,
+  launchPatientWorkspace,
+} from '@openmrs/esm-patient-common-lib';
 import { useTranslation } from 'react-i18next';
-import styles from './hiv-care-and-treatment.scss';
+import styles from './ethio-summary.scss';
 import { useEncounters } from './ethio-summary.resource';
 import { FOLLOWUP_ENCOUNTER_TYPE_UUID } from '../constants';
 import { getObsFromEncounter } from '../utils/encounter-utils';
@@ -37,6 +46,10 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
 
   const [patientData, setPatientData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [pageSize, setPageSize] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   useEffect(() => {
     const getPatientData = async () => {
@@ -71,17 +84,34 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
       id: item.uuid || index,
       name: item.name || '--',
       onSetDate: item.onSetDate ? formatDate(parseDate(item.onSetDate), { mode: 'wide' }) : '--',
-      status: item.status || '--',
+      //status: item.status || '--',
+      status: (
+        <div className={styles.priorityPill} data-priority={lowerCase(item.status || 'unknown')}>
+          {t(item.status || '--', capitalize(item.status?.replace('_', ' ') || '--'))}
+        </div>
+      ),
     }));
   }, [patientData]);
 
   // Pagination state
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const rowsPerPage = 10;
   const totalRows = tableRows.length;
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const currentRows = tableRows.slice(indexOfFirstRow, indexOfLastRow);
+
+  const currentRows = useMemo(
+    () => tableRows.slice(indexOfFirstRow, indexOfLastRow),
+    [indexOfFirstRow, indexOfLastRow, tableRows],
+  );
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setRowsPerPage(newPageSize);
+    setCurrentPage(1); // Reset to the first page when the page size changes
+  };
+
+  // Function to handle page change
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+  };
 
   // Error handling for loading and error states
   if (isLoading) return <DataTableSkeleton role="progressbar" compact={isDesktop} zebra />;
@@ -118,9 +148,33 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
               </TableContainer>
             )}
           </DataTable>
+          {totalRows > rowsPerPage && (
+            <Pagination
+              backwardText={t('previousPage', 'Previous page')}
+              forwardText={t('nextPage', 'Next page')}
+              itemsPerPageText={t('itemsPerPage', 'Items per page')}
+              page={currentPage}
+              pageSize={100}
+              pageSizes={[10, 20, 30, 40, 50]}
+              totalItems={totalRows}
+              onChange={(event) => {
+                if (event.pageSize !== rowsPerPage) {
+                  handlePageSizeChange(event.pageSize);
+                }
+                if (event.page !== currentPage) {
+                  handlePageChange(event.page);
+                }
+              }}
+            />
+          )}
         </>
       ) : (
-        <div></div>
+        <Layer>
+          <Tile className={styles.tile}>
+            <EmptyDataIllustration />
+            <p className={styles.content}>{t('noConditions', 'There are no conditions to display for this patient')}</p>
+          </Tile>
+        </Layer>
       )}
     </div>
   );

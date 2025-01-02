@@ -100,6 +100,7 @@ export async function fetchPatientHistoryData(patientUuid: string) {
       uuid: detail.uuid,
       observation: detail.observation,
       value: detail.value,
+      visitDate: detail.visitDate,
     }));
   } catch (error) {
     console.error('Error fetching patient data:', error);
