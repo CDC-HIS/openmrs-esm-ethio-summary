@@ -15,7 +15,7 @@ import {
 } from '@carbon/react';
 import { DataTableSkeleton, InlineLoading } from '@carbon/react';
 import { Add } from '@carbon/react/icons';
-import { formatDate, parseDate, restBaseUrl, useLayoutType } from '@openmrs/esm-framework';
+import { formatDate, formatDatetime, parseDate, restBaseUrl, useLayoutType } from '@openmrs/esm-framework';
 import {
   CardHeader,
   EmptyDataIllustration,
@@ -82,7 +82,7 @@ const PatientHistorySummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid
       id: item.uuid || index,
       observation: item.observation || 'N/A',
       value: item.value || 'N/A',
-      visitDate: item.visitDate ? formatDate(parseDate(item.visitDate), { mode: 'wide' }) : '--',
+      //visitDate: item.visitDate ? formatDate(parseDate(item.visitDate), { mode: 'wide' }) : '--',
     }));
   }, [patientData]);
 
@@ -112,9 +112,23 @@ const PatientHistorySummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid
 
   return (
     <div className={styles.widgetCard}>
-      <CardHeader title={headerTitle}>
-        <span></span>
-      </CardHeader>
+      <div className={styles.header}>
+        <div className={styles.visitInfo}>
+          <div>
+            <h4 className={styles.visitType} title={headerTitle}>
+              {t('patientHistory', 'Patient History')}
+            </h4>
+            <div className={styles.displayFlex}>
+              <h6 className={styles.dateLabel}>{t('visitDate', 'Visit Date')}:</h6>
+              <span className={styles.date}>
+                {patientData.length > 0 && patientData[0].visitDate
+                  ? formatDatetime(parseDate(patientData[0].visitDate), { mode: 'wide' })
+                  : ''}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
       {currentRows.length > 0 ? (
         <>
           <DataTable rows={currentRows} headers={tableHeaders} useZebraStyles size={isTablet ? 'lg' : 'sm'}>
