@@ -91,7 +91,7 @@ const EthioSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) => {
         </div>
       ),
     }));
-  }, [patientData]);
+  }, [patientData, t]);
 
   // Pagination state
   const totalRows = tableRows.length;

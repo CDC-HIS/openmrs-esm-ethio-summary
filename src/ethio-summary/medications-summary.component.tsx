@@ -72,13 +72,15 @@ const MedicationSummary: React.FC<HivCareAndTreatmentProps> = ({ patientUuid }) 
     { key: 'dateActive', header: 'Initiated Date' },
   ];
 
-  const tableRows = patientData
-    ? patientData.map((patient, index) => ({
-        id: patient.patientUUID || index,
-        regimen: patient.regimen || '--',
-        dateActive: patient.dateActive ? formatDate(parseDate(patient.dateActive), { mode: 'wide' }) : '--',
-      }))
-    : [];
+  const tableRows = useMemo(() => {
+    return patientData
+      ? patientData.map((patient, index) => ({
+          id: patient.patientUUID || index,
+          regimen: patient.regimen || '--',
+          dateActive: patient.dateActive ? formatDate(parseDate(patient.dateActive), { mode: 'wide' }) : '--',
+        }))
+      : [];
+  }, [patientData]);
 
   // Pagination state
   const totalRows = tableRows.length;
